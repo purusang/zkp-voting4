@@ -1,9 +1,8 @@
 const { mimcSpongecontract } = require('circomlibjs');
 // const { ethers } = require("hardhat");
-const { ethers1 } = require("ethers");
 const { ethers, network } = require("hardhat");
 const { generateCommitment, calculateMerkleRootAndZKProof } = require('zk-merkle-tree');
-
+const {getRandomBallot, generateRSAKeyPair } = require("./utils.js");
 const SEED = "mimcsponge";
 
 // the default verifier is for 20 levels, for different number of levels, you need a new verifier circuit
@@ -56,36 +55,35 @@ describe("ZKTree Smart contract test", () => {
     it("Test the full process", async () => {
         // Obtain the local Hardhat provider
         const signer = await createSigner1();
-        // console.log("work plz: ", signer);
-
-        // const signer1 = await createSigner1();
-        // console.log("work plz: ", signer1);
-
-
+        const candidates = 100;
         // // register 3 voters
-        const commitment1 = await generateCommitment()
-        await zktreevote.connect(signer).registerCommitment(1, commitment1.commitment)
-        const commitment2 = await generateCommitment()
-        await zktreevote.connect(signer).registerCommitment(2, commitment2.commitment)
         // const commitment3 = await generateCommitment()
         // await zktreevote.connect(signers[1]).registerCommitment(3, commitment3.commitment)
         // // console.log("commitments: ", commitment1, commitment2, commitment3);
-
+        
         // // votes
-        // // console.log(signers);
+        // first voter and first vote
+        const commitment1 = await generateCommitment();
+        const ballot = getRandomBallot(candidates);
+        console.log("Ballot :", ballot);
+        await zktreevote.connect(signer).registerCommitment(1, commitment1.commitment)
         const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment1, "keys/Verifier.zkey")
         await zktreevote.connect(signer).vote(1, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
         console.log("Yes I voted for the first candidate.");
+        
 
-        const cd2 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment2, "keys/Verifier.zkey")
-        await zktreevote.connect(signer).vote(1, cd2.nullifierHash, cd2.root, cd2.proof_a, cd2.proof_b, cd2.proof_c)
-        console.log("I voted for the first candidate twice.");
-        // const cd3 = await calculateMerkleRootAndZKProof(zktreevote.target, signers[4], TREE_LEVELS, commitment3, "keys/Verifier.zkey")
-        // await zktreevote.connect(signers[4]).vote(2, cd3.nullifierHash, cd3.root, cd3.proof_a, cd3.proof_b, cd3.proof_c)
+        // // 2nd voter and vote
+        // const commitment2 = await generateCommitment()
+        // await zktreevote.connect(signer).registerCommitment(2, commitment2.commitment)
+        // const cd2 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment2, "keys/Verifier.zkey")
+        // await zktreevote.connect(signer).vote(1, cd2.nullifierHash, cd2.root, cd2.proof_a, cd2.proof_b, cd2.proof_c)
+        // console.log("I voted for the first candidate twice.");
+        // // const cd3 = await calculateMerkleRootAndZKProof(zktreevote.target, signers[4], TREE_LEVELS, commitment3, "keys/Verifier.zkey")
+        // // await zktreevote.connect(signers[4]).vote(2, cd3.nullifierHash, cd3.root, cd3.proof_a, cd3.proof_b, cd3.proof_c)
 
-        const option1 = await zktreevote.connect(signer).getOptionCounter(1);
-        const option2 = await zktreevote.connect(signer).getOptionCounter(2);
-        console.log("option 1: ", option1, " option 2: ", option2);
+        // const option1 = await zktreevote.connect(signer).getOptionCounter(1);
+        // const option2 = await zktreevote.connect(signer).getOptionCounter(2);
+        // console.log("option 1:", option1, " option 2: ", option2);
     });
 
 });

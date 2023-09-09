@@ -7,18 +7,19 @@ contract ZKTreeVote is ZKTree {
     address public owner;
     mapping(address => bool) public validators;
     mapping(uint256 => bool) uniqueHashes;
-    uint numOptions;
-    mapping(uint => uint) optionCounter;
+    // uint numOptions;
+    uint256[] public ballots;
+    // mapping(uint => uint) optionCounter;
+    uint256 candidates;
 
     constructor(
         uint32 _levels,
         IHasher _hasher,
         IVerifier _verifier,
-        uint _numOptions
+        uint256 _candidates
     ) ZKTree(_levels, _hasher, _verifier) {
         owner = msg.sender;
-        numOptions = _numOptions;
-        for (uint i = 0; i <= numOptions; i++) optionCounter[i] = 0;
+        candidates = _candidates;
     }
 
     function registerValidator(address _validator) external {
@@ -40,14 +41,14 @@ contract ZKTreeVote is ZKTree {
     }
 
     function vote(
-        uint _option,
+        uint256 _ballot,
         uint256 _nullifier,
         uint256 _root,
         uint[2] memory _proof_a,
         uint[2][2] memory _proof_b,
         uint[2] memory _proof_c
     ) external {
-        require(_option <= numOptions, "Invalid option!");
+        // require(_option <= numOptions, "Invalid option!");
         _nullify(
             bytes32(_nullifier),
             bytes32(_root),
@@ -55,10 +56,10 @@ contract ZKTreeVote is ZKTree {
             _proof_b,
             _proof_c
         );
-        optionCounter[_option] = optionCounter[_option] + 1;
+        ballots.push(_ballot);
     }
 
-    function getOptionCounter(uint _option) external view returns (uint) {
-        return optionCounter[_option];
-    }
+    // function getOptionCounter(uint _option) external view returns (uint) {
+    //     return optionCounter[_option];
+    // }
 }
