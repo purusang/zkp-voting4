@@ -30,7 +30,7 @@ function decryptMessage(privateKey, encryptedMessage) {
 
 function getRandomBallot(candidates){
     // Generate a random number between 1 and 100
-    const vote = generateRandomNumber(candidates + 1);
+    const vote = generateRandomNumber(candidates)+1;
     const randomness = generateRandomNumber(Number.MAX_SAFE_INTEGER);
 
     // Calculate 100 * randomness + vote using big-integer
@@ -52,9 +52,29 @@ function decryptAllBallots(encryptedBallots, privateKey, candidates) {
   
     return decryptedBallots;
   }
+
+function calcVoteCount(ballots){
+    const uniqueValueCounts = {};
+
+    // Iterate through the array
+    ballots.forEach((value) => {
+    if (uniqueValueCounts[value]) {
+        uniqueValueCounts[value]++; // Increment the count if the value already exists
+    } else {
+        uniqueValueCounts[value] = 1; // Initialize count to 1 for a new unique value
+    }
+    });
+
+    // Print the counts of unique values
+    // for (const value in uniqueValueCounts) {
+    // console.log(`Value ${value}: Count ${uniqueValueCounts[value]}`);
+    // }
+    return uniqueValueCounts;
+}
 module.exports = {
     generateRSAKeyPair,
     getRandomBallot,
     decryptAllBallots,
-    encryptMessage
+    encryptMessage,
+    calcVoteCount
 }

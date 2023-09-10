@@ -2,7 +2,7 @@ const { mimcSpongecontract } = require('circomlibjs');
 // const { ethers } = require("hardhat");
 const { ethers, network } = require("hardhat");
 const { generateCommitment, calculateMerkleRootAndZKProof } = require('zk-merkle-tree');
-const {getRandomBallot, generateRSAKeyPair , decryptAllBallots, encryptMessage} = require("./utils.js");
+const {getRandomBallot, generateRSAKeyPair , decryptAllBallots, encryptMessage, calcVoteCount} = require("./utils.js");
 const SEED = "mimcsponge";
 
 // the default verifier is for 20 levels, for different number of levels, you need a new verifier circuit
@@ -55,16 +55,17 @@ describe("ZKTree Smart contract test", () => {
     it("Test the full process", async () => {
         // Obtain the local Hardhat provider
         const signer = await createSigner1();
-        const candidates = 100;
+        const candidates = 3;
         let {publicKey, privateKey}= generateRSAKeyPair();
+        let votes = [];
 
         // REGISTER VOTERS, GENERATE PROOF OF MERKEL MEMBERSHIP, VOTE
-        for(let i =0; i< 5; i++){
+        for(let i =0; i< 20; i++){
             const commitment = await generateCommitment();
             await zktreevote.connect(signer).registerVoter(i, commitment.commitment)
 
             const [ballot, vote] = getRandomBallot(candidates);
-            // const ballotEthInt256 = ethers.BigNumber.from(BigInt(Number(ballot)));
+            votes.push(vote);
             
             // ENCRYPT WALLET
             encryptedBallot = encryptMessage(publicKey, ballot);
@@ -73,7 +74,7 @@ describe("ZKTree Smart contract test", () => {
             
             const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment, "keys/Verifier.zkey")
             await zktreevote.connect(signer).vote(encryptedBallot, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
-            console.log(`Yes I voted for the  ${vote}th candidate.` );
+            console.log(`Yes I voted for candidate no. ${vote}.` );
         }
 
         //  FETCH BALLOTS
@@ -83,6 +84,11 @@ describe("ZKTree Smart contract test", () => {
         // DECRYPT ALL BALLOTS
         const decryptedBallots = decryptAllBallots(ballots, privateKey, candidates);
         console.log(decryptedBallots);
+
+        // RESULT DECLARATION
+        const result = calcVoteCount(decryptedBallots);
+        console.log(result);
+        console.log(votes);
         
     });
 
