@@ -8,7 +8,7 @@ contract ZKTreeVote is ZKTree {
     mapping(address => bool) public validators;
     mapping(uint256 => bool) uniqueHashes;
     // uint numOptions;
-    uint256[] public ballots;
+    string[] public ballots;
     // mapping(uint => uint) optionCounter;
     uint256 candidates;
 
@@ -41,7 +41,7 @@ contract ZKTreeVote is ZKTree {
     }
 
     function vote(
-        uint256 _ballot,
+        string memory _ballot,
         uint256 _nullifier,
         uint256 _root,
         uint[2] memory _proof_a,
@@ -60,7 +60,7 @@ contract ZKTreeVote is ZKTree {
     }
 
     // Function to get all the ballots
-    function getAllBallots() external view returns (uint256[] memory) {
+    function getAllBallots() external view returns (string[] memory) {
         return ballots;
     }
 }

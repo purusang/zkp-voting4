@@ -38,27 +38,13 @@ function getRandomBallot(candidates){
     const ballot = bigRandomness.multiply(candidates + 1).add(vote);
     return [ballot, vote];
 }
-// Example usage
-// export 
-// const { privateKey, publicKey } = generateRSAKeyPair();
 
-// const encryptedMessage = encryptMessage(publicKey, ballot);
-// const decryptedMessage = decryptMessage(privateKey, encryptedMessage);
-
-// console.log('Vote:', vote);
-// console.log('Encrypted Message:', encryptedMessage);
-// console.log('Result (100 * randomness + vote):', ballot.toString()); // Convert result to a string for printing
-// console.log("Decrypted Ballot: ", decryptedMessage);
-// console.log("Decrypted choice: ", Number(bigInt(decryptedMessage).mod(candidates + 1)));
-function decryptAllBallots(encryptedBallots) {
+function decryptAllBallots(encryptedBallots, privateKey, candidates) {
     const decryptedBallots = [];
-  
     for (const encryptedBallot of encryptedBallots) {
       try {
-        // Convert the hex string to bytes and decrypt it
-        const encryptedBytes = Buffer.from(encryptedBallot.slice(2), 'hex');
-        const decryptedBallot = decryptMessage(privateKey, encryptedBytes);
-        decryptedBallots.push(decryptedBallot);
+        const decryptedBallot = decryptMessage(privateKey, encryptedBallot);
+        decryptedBallots.push(Number(bigInt(decryptedBallot).mod(candidates + 1)));
       } catch (error) {
         console.error('Error decrypting ballot:', error);
       }
@@ -69,5 +55,6 @@ function decryptAllBallots(encryptedBallots) {
 module.exports = {
     generateRSAKeyPair,
     getRandomBallot,
-    decryptAllBallots
+    decryptAllBallots,
+    encryptMessage
 }

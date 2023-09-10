@@ -2,7 +2,7 @@ const { mimcSpongecontract } = require('circomlibjs');
 // const { ethers } = require("hardhat");
 const { ethers, network } = require("hardhat");
 const { generateCommitment, calculateMerkleRootAndZKProof } = require('zk-merkle-tree');
-const {getRandomBallot, generateRSAKeyPair , decryptAllBallots } = require("./utils.js");
+const {getRandomBallot, generateRSAKeyPair , decryptAllBallots, encryptMessage} = require("./utils.js");
 const SEED = "mimcsponge";
 
 // the default verifier is for 20 levels, for different number of levels, you need a new verifier circuit
@@ -56,24 +56,34 @@ describe("ZKTree Smart contract test", () => {
         // Obtain the local Hardhat provider
         const signer = await createSigner1();
         const candidates = 100;
+        let {publicKey, privateKey}= generateRSAKeyPair();
 
         // REGISTER VOTERS, GENERATE PROOF OF MERKEL MEMBERSHIP, VOTE
-        for(let i =0; i< 3; i++){
+        for(let i =0; i< 5; i++){
             const commitment = await generateCommitment();
             await zktreevote.connect(signer).registerVoter(i, commitment.commitment)
 
             const [ballot, vote] = getRandomBallot(candidates);
-            const ballotEthInt256 = ethers.BigNumber.from(BigInt(Number(ballot)));
+            // const ballotEthInt256 = ethers.BigNumber.from(BigInt(Number(ballot)));
+            
+            // ENCRYPT WALLET
+            encryptedBallot = encryptMessage(publicKey, ballot);
+            console.log(`\nEncrypted Ballot: ${encryptedBallot}\n` );
+
+            
             const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment, "keys/Verifier.zkey")
-            await zktreevote.connect(signer).vote(ballotEthInt256, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
+            await zktreevote.connect(signer).vote(encryptedBallot, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
             console.log(`Yes I voted for the  ${vote}th candidate.` );
         }
 
         //  FETCH BALLOTS
         const ballots = await zktreevote.connect(signer).getAllBallots();      
-        console.log("All Ballots: ", ballots);
+        console.log("All encrypted Ballots fetched from blockchain: ", ballots);
 
-
+        // DECRYPT ALL BALLOTS
+        const decryptedBallots = decryptAllBallots(ballots, privateKey, candidates);
+        console.log(decryptedBallots);
+        
     });
 
 });
