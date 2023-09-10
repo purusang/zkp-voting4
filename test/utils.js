@@ -50,8 +50,24 @@ function getRandomBallot(candidates){
 // console.log('Result (100 * randomness + vote):', ballot.toString()); // Convert result to a string for printing
 // console.log("Decrypted Ballot: ", decryptedMessage);
 // console.log("Decrypted choice: ", Number(bigInt(decryptedMessage).mod(candidates + 1)));
-
+function decryptAllBallots(encryptedBallots) {
+    const decryptedBallots = [];
+  
+    for (const encryptedBallot of encryptedBallots) {
+      try {
+        // Convert the hex string to bytes and decrypt it
+        const encryptedBytes = Buffer.from(encryptedBallot.slice(2), 'hex');
+        const decryptedBallot = decryptMessage(privateKey, encryptedBytes);
+        decryptedBallots.push(decryptedBallot);
+      } catch (error) {
+        console.error('Error decrypting ballot:', error);
+      }
+    }
+  
+    return decryptedBallots;
+  }
 module.exports = {
     generateRSAKeyPair,
-    getRandomBallot
+    getRandomBallot,
+    decryptAllBallots
 }

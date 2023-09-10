@@ -16,23 +16,23 @@ async function main() {
   const signers = await hre.ethers.getSigners()
   const MiMCSponge = new hre.ethers.ContractFactory(mimcSpongecontract.abi, mimcSpongecontract.createCode(SEED, 220), signers[0])
   const mimcsponge = await MiMCSponge.deploy()
-  console.log(`MiMC sponge hasher address: ${mimcsponge.target}`)
+  console.log(`MiMC sponge hasher address: ${mimcsponge.address}`)
 
 
   const Verifier = await ethers.getContractFactory("Verifier");
   const verifier = await Verifier.deploy();
-  console.log(`Verifier address: ${verifier.target}`)
+  console.log(`Verifier address: ${verifier.address}`)
 
   const ZKTreeVote = await ethers.getContractFactory("ZKTreeVote");
-  const zktreevote = await ZKTreeVote.deploy(TREE_LEVELS, mimcsponge.target, verifier.target, 100);
-  console.log(`ZKTreeVote address: ${zktreevote.target}`)
+  const zktreevote = await ZKTreeVote.deploy(TREE_LEVELS, mimcsponge.address, verifier.address, 4);
+  console.log(`ZKTreeVote address: ${zktreevote.address}`)
 
 
   //store addressess of just deployed smart contracts.
   const data = {
-    MS: mimcsponge.target,
-    VS: verifier.target,
-    ZK: zktreevote.target
+    MS: mimcsponge.address,
+    VS: verifier.address,
+    ZK: zktreevote.address
   };
 
   const jsonData = JSON.stringify(data);

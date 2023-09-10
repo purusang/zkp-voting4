@@ -27,7 +27,7 @@ contract ZKTreeVote is ZKTree {
         validators[_validator] = true;
     }
 
-    function registerCommitment(
+    function registerVoter(
         uint256 _uniqueHash,
         uint256 _commitment
     ) external {
@@ -59,7 +59,8 @@ contract ZKTreeVote is ZKTree {
         ballots.push(_ballot);
     }
 
-    // function getOptionCounter(uint _option) external view returns (uint) {
-    //     return optionCounter[_option];
-    // }
+    // Function to get all the ballots
+    function getAllBallots() external view returns (uint256[] memory) {
+        return ballots;
+    }
 }
