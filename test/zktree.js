@@ -63,14 +63,16 @@ describe("ZKTree Smart contract test", () => {
         
         // // votes
         // first voter and first vote
-        const commitment1 = await generateCommitment();
-        const ballot = getRandomBallot(candidates);
-        console.log("Ballot :", ballot);
-        await zktreevote.connect(signer).registerCommitment(1, commitment1.commitment)
-        const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment1, "keys/Verifier.zkey")
-        await zktreevote.connect(signer).vote(1, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
-        console.log("Yes I voted for the first candidate.");
-        
+        for(let i =0; i< 3; i++){
+            const commitment = await generateCommitment();
+            await zktreevote.connect(signer).registerCommitment(i, commitment.commitment)
+
+            const [ballot, vote] = getRandomBallot(candidates);
+            const ballotEthInt256 = ethers.BigNumber.from(BigInt(Number(ballot)));
+            const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment, "keys/Verifier.zkey")
+            await zktreevote.connect(signer).vote(ballotEthInt256, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c)
+            console.log(`Yes I voted for the  ${vote}th candidate.` );
+        }
 
         // // 2nd voter and vote
         // const commitment2 = await generateCommitment()

@@ -36,7 +36,7 @@ function getRandomBallot(candidates){
     // Calculate 100 * randomness + vote using big-integer
     const bigRandomness = bigInt(randomness.toString()); // Convert randomness to a big integer
     const ballot = bigRandomness.multiply(candidates + 1).add(vote);
-    return ballot;
+    return [ballot, vote];
 }
 // Example usage
 // export 
