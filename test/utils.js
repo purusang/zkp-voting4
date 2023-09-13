@@ -71,10 +71,20 @@ function calcVoteCount(ballots){
     // }
     return uniqueValueCounts;
 }
+// Define the conversion rate from ETH to USD
+const ethToUsdRate = 1588.01; // 1 ETH = 1588.01 USD
+
+// Function to convert gas cost in Gwei to USD
+function convertGasToUsd(gasCostGwei) {
+    const gasCostEth = gasCostGwei / 1e9; // Convert Gwei to ETH
+    const gasCostUsd = gasCostEth * ethToUsdRate; // Convert ETH to USD
+    return gasCostUsd;
+}
 module.exports = {
     generateRSAKeyPair,
     getRandomBallot,
     decryptAllBallots,
     encryptMessage,
-    calcVoteCount
+    calcVoteCount,
+    convertGasToUsd
 }
