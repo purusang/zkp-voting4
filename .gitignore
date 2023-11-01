@@ -12,3 +12,6 @@ artifacts
 circom
 .DS_*
 data/
+
+keys
+build
