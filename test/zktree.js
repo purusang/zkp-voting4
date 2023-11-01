@@ -82,7 +82,7 @@ describe("ZKTree Smart contract test", () => {
         let votes = [];
 
         // REGISTER VOTERS, GENERATE PROOF OF MERKEL MEMBERSHIP, VOTE
-        for(let i =0; i< 1000; i++){
+        for(let i =355; i< 1000; i++){
             // REG VOTER
             const startTimeGenerateCommitment = performance.now();
 
@@ -132,11 +132,7 @@ describe("ZKTree Smart contract test", () => {
             let duration = endTime - startTime;
             let data = `${i + 1},${duration}, ${gas_units}, ${gas_USD}\n`;
             fs.appendFileSync('data/data_vote_cast.csv', data, 'utf8');
-
-
-
-
-        }
+        } //loop end
 
         //  FETCH BALLOTS
         const ballots = await zktreevote.connect(signer).getAllBallots();      
