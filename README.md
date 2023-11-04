@@ -4,5 +4,5 @@
 npm run prepare
 npx hardhat node
 npx hardhat compile
-npx hardhat test:zktree
+npm run test:zktree
 ```

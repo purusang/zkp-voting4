@@ -78,26 +78,23 @@ describe("ZKTree Smart contract test", () => {
         // Obtain the local Hardhat provider
         const signer = await createSigner1();
         const candidates = 20;
-        let {publicKey, privateKey}= generateRSAKeyPair();
+        let {publicKey, privateKey}= generateRSAKeyPair();  // Key used for enc and dec of ballot
         let votes = [];
 
         // REGISTER VOTERS, GENERATE PROOF OF MERKEL MEMBERSHIP, VOTE
-        for(let i =355; i< 1000; i++){
+        for(let i =0; i< 10; i++){
             // REG VOTER
             const startTimeGenerateCommitment = performance.now();
-
             const commitment = await generateCommitment();
             let tx = await zktreevote.connect(signer).registerVoter(i, commitment.commitment);
-
             let receipt = await tx.wait();
             let gas_units = receipt.gasUsed.toString();
             let gas_USD = convertGasToUsd(gas_units);
 
             const endTimeGenerateCommitment = performance.now();
             const timeRegisterVoter = endTimeGenerateCommitment - startTimeGenerateCommitment;
-            console.log(`Time spent on generateCommitment ${i + 1}: ${timeRegisterVoter} milliseconds`);
+            console.log(`Time spent to register a Voter ${i + 1}: ${timeRegisterVoter} milliseconds`);
 
-            // Append data to data.csv
             const csvData = `${i + 1},${timeRegisterVoter}, ${gas_units}, ${gas_USD}\n`;
             fs.appendFileSync('data/data_voter_registration.csv', csvData, 'utf8');
 
@@ -120,9 +117,8 @@ describe("ZKTree Smart contract test", () => {
             fs.appendFileSync('data/data_proof_generation.csv', proofData, 'utf8');
 
             let startTime = performance.now();
-
             tx = await zktreevote.connect(signer).vote(encryptedBallot, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c);
-            console.log(`Yes voted for candidate no. ${vote}.` );
+            console.log(`Voted for candidate no. ${vote}.` );
 
             receipt = await tx.wait();
             gas_units = receipt.gasUsed.toString();
