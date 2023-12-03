@@ -12,7 +12,7 @@ const SEED = "mimcsponge";
 const TREE_LEVELS = 20;
 async function createSigner() {
     // Get the provider from Hardhat
-    const provider = ethers.provider;
+    const provider = ethers.provider; 
 
     // Get the signer using the provider
     const signer = await provider.getSigner();
@@ -111,23 +111,23 @@ describe("ZKTree Smart contract test", () => {
 
             const cd1 = await calculateMerkleRootAndZKProof(zktreevote.address, signer, TREE_LEVELS, commitment, "keys/Verifier.zkey")
 
-            const endProofGeneration = performance.now();
-            const ProofGenTime = endProofGeneration - startProofGeneration;
-            const proofData = `${i + 1},${ProofGenTime}\n`;
-            fs.appendFileSync('data/data_proof_generation.csv', proofData, 'utf8');
+            // const endProofGeneration = performance.now();
+            // const ProofGenTime = endProofGeneration - startProofGeneration;
+            // const proofData = `${i + 1},${ProofGenTime}\n`;
+            // fs.appendFileSync('data/data_proof_generation.csv', proofData, 'utf8');
 
-            let startTime = performance.now();
-            tx = await zktreevote.connect(signer).vote(encryptedBallot, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c);
-            console.log(`Voted for candidate no. ${vote}.` );
+            // let startTime = performance.now();
+            // tx = await zktreevote.connect(signer).vote(encryptedBallot, cd1.nullifierHash, cd1.root, cd1.proof_a, cd1.proof_b, cd1.proof_c);
+            // console.log(`Voted for candidate no. ${vote}.` );
 
-            receipt = await tx.wait();
-            gas_units = receipt.gasUsed.toString();
-            gas_USD = convertGasToUsd(gas_units);
+            // receipt = await tx.wait();
+            // gas_units = receipt.gasUsed.toString();
+            // gas_USD = convertGasToUsd(gas_units);
 
-            let endTime = performance.now();
-            let duration = endTime - startTime;
-            let data = `${i + 1},${duration}, ${gas_units}, ${gas_USD}\n`;
-            fs.appendFileSync('data/data_vote_cast.csv', data, 'utf8');
+            // let endTime = performance.now();
+            // let duration = endTime - startTime;
+            // let data = `${i + 1},${duration}, ${gas_units}, ${gas_USD}\n`;
+            // fs.appendFileSync('data/data_vote_cast.csv', data, 'utf8');
         } //loop end
 
         //  FETCH BALLOTS
