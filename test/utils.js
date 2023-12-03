@@ -38,6 +38,10 @@ function getRandomBallot(candidates){
     const ballot = bigRandomness.multiply(candidates + 1).add(vote);
     return [ballot, vote];
 }
+function Hacker() {
+  // This returns true with 33% chance.
+  return [Math.random() < 0.20, Math.random() ];
+}
 
 function decryptAllBallots(encryptedBallots, privateKey, candidates) {
     const decryptedBallots = [];
@@ -80,11 +84,47 @@ function convertGasToUsd(gasCostGwei) {
     const gasCostUsd = gasCostEth * ethToUsdRate; // Convert ETH to USD
     return gasCostUsd;
 }
+function delay(duration){
+      // Pause for 3 seconds
+      const start = Date.now();
+      while (Date.now() - start < duration) {
+      // This loop will block execution for 3 seconds.
+      }
+}
+function findWinner(voteCounts) {
+  let maxVotes = 0;
+  let winner = [];
+
+  // Iterate through the vote counts
+  for (const candidate in voteCounts) {
+    const votes = voteCounts[candidate];
+    if (votes > maxVotes) {
+      // Update the current winner
+      winner = [candidate];
+      maxVotes = votes;
+    } else if (votes === maxVotes) {
+      // Add candidate to the list of winners (in case of a tie)
+      winner.push(candidate);
+    }
+  }
+
+  // return winner;
+  
+  if (winner.length === 1) {
+    console.log(`Candidate ${winner[0]} is the winner with ${voteCounts[winner[0]]} vote(s).`);
+  } else {
+    console.log('It\'s a tie between candidates:', winner.join(', '));
+  }
+}
+
 module.exports = {
     generateRSAKeyPair,
     getRandomBallot,
     decryptAllBallots,
     encryptMessage,
     calcVoteCount,
-    convertGasToUsd
+    convertGasToUsd,
+    Hacker,
+    delay,
+    findWinner,
 }

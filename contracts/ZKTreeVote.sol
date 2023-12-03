@@ -9,7 +9,7 @@ contract ZKTreeVote is ZKTree {
     mapping(uint256 => bool) uniqueHashes;
     // uint numOptions;
     string[] public ballots;
-    // mapping(uint => uint) optionCounter;
+    mapping(string => bool) submittedBallots;
     uint256 candidates;
 
     constructor(
@@ -28,8 +28,8 @@ contract ZKTreeVote is ZKTree {
     }
 
     function registerVoter(
-        uint256 _uniqueHash,
-        uint256 _commitment
+        uint256 _uniqueHash,    // secret
+        uint256 _commitment     // nullifier
     ) external {
         // require(validators[msg.sender], "Only validator can commit!");
         require(
@@ -48,7 +48,7 @@ contract ZKTreeVote is ZKTree {
         uint[2][2] memory _proof_b,
         uint[2] memory _proof_c
     ) external {
-        // require(_option <= numOptions, "Invalid option!");
+        require( !submittedBallots[_ballot], "Ballot with same value not allowed!"); 
         _nullify(
             bytes32(_nullifier),
             bytes32(_root),
@@ -57,6 +57,7 @@ contract ZKTreeVote is ZKTree {
             _proof_c
         );
         ballots.push(_ballot);
+        submittedBallots[_ballot] = true;
     }
 
     // Function to get all the ballots
