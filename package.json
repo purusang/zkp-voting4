@@ -6,6 +6,8 @@
   "scripts": {
     "deploy": "hardhat run --network localhost scripts/deploy.js",
     "test:zktree": "mocha --timeout 100000 test/zktree.js",
+    "test:ballot": "mocha --timeout 10000 test/ballot.js",
+    "test:gasusd": "mocha --timeout 10000 test/gastousd.js",
     "prepare": "sh scripts/prepare.sh"
   },
   "author": "",

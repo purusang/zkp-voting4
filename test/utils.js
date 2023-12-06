@@ -38,6 +38,16 @@ function getRandomBallot(candidates){
     const ballot = bigRandomness.multiply(candidates + 1).add(vote);
     return [ballot, vote];
 }
+function getRandomBallotAndRand(candidates){
+  // Generate a random number between 1 and 100
+  const vote = generateRandomNumber(candidates)+1;
+  const randomness = generateRandomNumber(Number.MAX_SAFE_INTEGER);
+
+  // Calculate 100 * randomness + vote using big-integer
+  const bigRandomness = bigInt(randomness.toString()); // Convert randomness to a big integer
+  const ballot = bigRandomness.multiply(candidates + 1).add(vote);
+  return [ballot, vote, bigRandomness];
+}
 function Hacker() {
   // This returns true with 33% chance.
   return [Math.random() < 0.20, Math.random() ];
@@ -127,4 +137,6 @@ module.exports = {
     Hacker,
     delay,
     findWinner,
+    getRandomBallotAndRand,
+    convertGasToUsd,
 }

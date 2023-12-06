@@ -11,9 +11,10 @@ const SEED = "mimcsponge";
 // the default verifier is for 20 levels, for different number of levels, you need a new verifier circuit
 const TREE_LEVELS = 20;
 const candidates = 20;
+
 async function createSigner() {
     // Get the provider from Hardhat
-    const provider = ethers.provider;
+    const provider = ethers.provider; 
 
     // Get the signer using the provider
     const signer = await provider.getSigner();
@@ -44,7 +45,7 @@ async function createSigner1() {
 
 }
 describe("ZKTree Smart contract test", () => {
-    // Text Coloring Logic
+// Text Coloring Logic
     const reset = "\x1b[0m";
     const log = {
       green: (text) => console.log("\x1b[32m" + text + reset),
@@ -69,18 +70,18 @@ describe("ZKTree Smart contract test", () => {
         if (!fs.existsSync('data')) {
             fs.mkdirSync('data');
         }
-        const csvFilePath = `data/data_voter_registration_${TREE_LEVELS}.csv`;
+        const csvFilePath = 'data/data_voter_registration.csv';
         if (!fs.existsSync(csvFilePath)) {
             const csvHeader = 'Iteration,TimeRegisterVoter (milliseconds)\n';
             fs.writeFileSync(csvFilePath, csvHeader, 'utf8');
         }
         if (!fs.existsSync("data/data_proof_generation.csv")) {
             const Header= 'Iteration, ProofGenerationTime (ms)\n';
-            fs.writeFileSync(`data/data_proof_generation_${TREE_LEVELS}.csv`, Header, 'utf8');
+            fs.writeFileSync('data/data_proof_generation.csv', Header, 'utf8');
         }
         if (!fs.existsSync("data/data_vote_cast.csv")){
             const Header= 'Iteration, VoteCastTime (ms), Gas (Unit), Gas Cost (USD)\n';
-            fs.writeFileSync(`data/data_vote_cast_${TREE_LEVELS}.csv`, Header, 'utf8');
+            fs.writeFileSync('data/data_vote_cast.csv', Header, 'utf8');
         }
     });
 
@@ -92,7 +93,7 @@ describe("ZKTree Smart contract test", () => {
         let usedBallot;
         // REGISTER VOTERS, GENERATE PROOF OF MERKEL MEMBERSHIP, VOTE
         for(let i =0; i< 100; i++){
-            log.blue("\n\n***************** Voting Process for Individual Voter ***************\n")
+        log.blue("\n\n***************** Voting Process for Individual Voter ***************\n")
             // REG VOTER
             const startTimeGenerateCommitment = performance.now();
             const commitment = await generateCommitment();
@@ -106,7 +107,7 @@ describe("ZKTree Smart contract test", () => {
             console.log(`Time spent to register a Voter ${i + 1}: ${timeRegisterVoter} milliseconds`);
 
             const csvData = `${i + 1},${timeRegisterVoter}, ${gas_units}, ${gas_USD}\n`;
-            fs.appendFileSync(`data/data_voter_registration_${TREE_LEVELS}.csv`, csvData, 'utf8');
+            fs.appendFileSync('data/data_voter_registration.csv', csvData, 'utf8');
 
             //BALLOT
             const [ballot, vote] = getRandomBallot(candidates);
@@ -154,7 +155,7 @@ describe("ZKTree Smart contract test", () => {
             let duration = endTime - startTime;
             let data = `${i + 1},${duration}, ${gas_units}, ${gas_USD}\n`;
             fs.appendFileSync('data/data_vote_cast.csv', data, 'utf8');
-            
+
             // Double Voting
             [isHacker, randHackNo] = Hacker();
             if (isHacker){
